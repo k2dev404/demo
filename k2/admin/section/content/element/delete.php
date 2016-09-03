@@ -2,12 +2,15 @@
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SECTION_CONTENT');
 
+if($_REQUEST['session'] != $USER['SESSION']){
+	exit();
+}
+
 if($_ID){
 	$LIB['BLOCK_ELEMENT']->Delete($_ID, $_SECTION_BLOCK);
 }
 if($_POST['ID']){
-	for($i=0; $i<count($_POST['ID']); $i++)
-	{
+	for($i = 0; $i < count($_POST['ID']); $i++){
 		$LIB['BLOCK_ELEMENT']->Delete($_POST['ID'][$i], $_SECTION_BLOCK);
 	}
 }

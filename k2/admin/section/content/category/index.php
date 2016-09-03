@@ -133,6 +133,7 @@ if($_CATEGORY){
 			</tr>
 	</table>
 	<form method="post" id="form">
+		<input type="hidden" name="session" value="<?=$USER['SESSION']?>">
 		<input type="hidden" name="section" value="<?=$_SECTION?>">
 		<input type="hidden" name="section_block" value="<?=$_SECTION_BLOCK?>">
 		<input type="hidden" name="category" value="<?=$_CATEGORY?>">
@@ -159,7 +160,7 @@ if($_CATEGORY){
 					'SECTION' => array('URL' => '/k2/admin/section/content/?section='.$_SECTION.'&section_block='.$_SECTION_BLOCK.'&category='.$arList[$i]['ID'])
 					));
 					?>
-					<td align="center" class="action"><a href="delete.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+					<td align="center" class="action"><a href="delete.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 				</tr><?
 			}
 			if(!$i){

@@ -125,21 +125,29 @@ var tree_move_elm = false;
 
 var k2 = {
 	transcription: {
-		ru_str: "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя",
-		en_str: ['A', 'B', 'V', 'G', 'D', 'E', 'JO', 'ZH', 'Z', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'CH', 'SH', 'SHH', String.fromCharCode(35), 'I', String.fromCharCode(39), 'JE', 'JU', 'JA', 'a', 'b', 'v', 'g', 'd', 'e', 'jo', 'zh', 'z', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'shh', String.fromCharCode(35), 'i', String.fromCharCode(39), 'je', 'ju', 'ja'],
-		translit: function (org_str) {
-			var tmp_str = "";
-			for (var i = 0, l = org_str.length; i < l; i++) {
-				var s = org_str.charAt(i),
-					n = k2.transcription.ru_str.indexOf(s);
-				if (n >= 0) {
-					tmp_str += k2.transcription.en_str[n];
-				}
-				else {
-					tmp_str += s;
+		translit: function (from) {
+			from = from.toLowerCase();
+
+			var word = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'x', 'ц': 'cz', 'ч': 'ch', 'ш': 'sh', 'щ': 'shh', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya', '\'': '\''};
+			var to = '';
+
+			for (var i = 0, l = from.length; i < l; i++) {
+				if (word[from[i]]) {
+					to += word[from[i]];
+				} else if (/[a-z0-9]/.test(from[i])) {
+					to += from[i];
+				} else {
+					to += '-';
 				}
 			}
-			return tmp_str;
+
+			to = to.replace(/(^\s+)|(\s+$)/g, '');
+			to = to.replace(/(\&#\d+;)+/g, '');
+			to = to.replace(/[^a-zA-Z0-9\-\_ ]+/g, '');
+			to = to.replace(/[ ]+/g, '-');
+			to = to.replace(/[-]+/g, '-');
+
+			return to;
 		},
 		par: {},
 		timer: null,
@@ -149,28 +157,16 @@ var k2 = {
 			}
 			$('#transcription-from').keyup(function () {
 				k2.transcription.begin();
-				/*k2.transcription.timer = setTimeout(function(){
-				 k2.transcription.begin();
-				 }, 2000);*/
-			});
-			$('#transcription-from').keypress(function () {
-				/*clearTimeout(k2.transcription.timer);*/
 			});
 		},
 		begin: function () {
-			if (!k2.transcription.par.ignore_cookie) {
-				if ($.cookie('K2_TRANSCRIPTION') == 1) {
-					return false;
-				}
+			var icon = $('#transcription-icon');
+
+			if (icon.size() && icon.hasClass('lock')) {
+				return false;
 			}
-			text = $('#transcription-from').val();
-			text = k2.transcription.translit(text);
-			text = text.replace(/(^\s+)|(\s+$)/g, '');
-			text = text.replace(/(\&#\d+;)+/g, '');
-			text = text.replace(/[^a-zA-Z0-9\-\_ ]+/g, '');
-			text = text.replace(/[ ]+/g, '-');
-			text = text.replace(/[-]+/g, '-');
-			text = text.toLowerCase();
+
+			var text = k2.transcription.translit($('#transcription-from').val());
 
 			if (text && k2.transcription.par.preffix) {
 				text = k2.transcription.par.preffix + text;
@@ -178,17 +174,19 @@ var k2 = {
 			if (k2.transcription.par.suffix) {
 				text = text + k2.transcription.par.suffix;
 			}
+
 			$('#transcription-to').val(text);
 		},
 		lock: function (_this) {
-			cookie = $.cookie('K2_TRANSCRIPTION');
-			if (cookie == null || cookie == 0) {
-				$(_this).removeClass('unlock').addClass('lock');
-				$.cookie('K2_TRANSCRIPTION', '1');
-			} else {
+
+			if ($(_this).hasClass('lock')) {
 				$(_this).removeClass('lock').addClass('unlock');
-				$.cookie('K2_TRANSCRIPTION', '0');
+				$.cookie('K2_TRANSCRIPTION', 0);
+			} else {
+				$(_this).removeClass('unlock').addClass('lock');
+				$.cookie('K2_TRANSCRIPTION', 1);
 			}
+
 			return false;
 		}
 	},
@@ -458,26 +456,6 @@ var tree = {
 }
 
 $(function () {
-	if($('input[name=URL_ALTERNATIVE]').size()){
-		//var urlAlt = $('input[name=URL_ALTERNATIVE]').val();
-
-		//if(!urlAlt.length){
-		$('input[name=NAME]').keyup(function () {
-			var text = $('input[name=NAME]').val();
-
-			text = k2.transcription.translit(text);
-			text = text.replace(/(^\s+)|(\s+$)/g, '');
-			text = text.replace(/(\&#\d+;)+/g, '');
-			text = text.replace(/[^a-zA-Z0-9\-\_ ]+/g, '');
-			text = text.replace(/[ ]+/g, '-');
-			text = text.replace(/[-]+/g, '-');
-			text = text.toLowerCase();
-
-			$('input[name=URL_ALTERNATIVE]').val(text);
-		});
-		//}
-	}
-
 	if (typeof(section) != 'undefined') {
 		$('#tree a[section=' + section + ']').parent().addClass('current');
 	}
@@ -515,15 +493,17 @@ $(function () {
 			x += 2;
 			y += 2;
 
+			session = $('#tree input[name=session]').val();
+
 			section = $(this).attr('section');
 			url = $(this).attr('url');
 			menu = '<div id="context-menu">' +
-			'<a href="/k2/admin/section/add.php?section=' + section + '">Добавить подраздел</a>' +
-			'<a href="/k2/admin/section/edit.php?section=' + section + '">Редактировать</a>' +
-			'<a href="/k2/admin/section/delete.php?id=' + section + '" onclick="return $.prompt(this)">Удалить</a>' +
-			'<div class="line"></div>' +
-			'<a href="' + url + '" blank="true" target="_blank">Посмотреть на сайте</a>' +
-			'</div>';
+				'<a href="/k2/admin/section/add.php?section=' + section + '">Добавить подраздел</a>' +
+				'<a href="/k2/admin/section/edit.php?section=' + section + '">Редактировать</a>' +
+				'<a href="/k2/admin/section/delete.php?id=' + section + '&session=' + session + '" onclick="return $.prompt(this)">Удалить</a>' +
+				'<div class="line"></div>' +
+				'<a href="' + url + '" blank="true" target="_blank">Посмотреть на сайте</a>' +
+				'</div>';
 
 			$(menu).appendTo('body');
 

@@ -734,7 +734,7 @@ table.select select {
 }
 .error, .complite, .warning {
 	display: inline-block;
-	background-color: #d4e4cf;
+	background-color: #f4e0e0;
 	border: 1px solid #efc8c1;
 	padding: 6px 10px 5px;
 	min-width: 350px;

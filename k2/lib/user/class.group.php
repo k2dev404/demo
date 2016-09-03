@@ -6,8 +6,8 @@ class UserGroup
 	{
 		global $DB;
 		$arGroup = $DB->Rows("SELECT * FROM `k2_user_group` ORDER BY `ID` ASC");
-		if ($bPermission) {
-			for ($i = 0; $i < count($arGroup); $i++) {
+		if($bPermission){
+			for($i = 0; $i < count($arGroup); $i++){
 				$arGroup[$i]['PERMISSION_DEFAULT'] = unserialize($arGroup[$i]['PERMISSION_DEFAULT']);
 				$arGroup[$i]['PERMISSION_SITE'] = unserialize($arGroup[$i]['PERMISSION_SITE']);
 				$arGroup[$i]['PERMISSION_SECTION'] = unserialize($arGroup[$i]['PERMISSION_SECTION']);
@@ -20,7 +20,7 @@ class UserGroup
 	function Name($nID)
 	{
 		global $DB;
-		if ($arGroup = $DB->Row("SELECT `NAME` FROM `k2_user_group` WHERE `ID` = '".(int)$nID."'")) {
+		if($arGroup = $DB->Row("SELECT `NAME` FROM `k2_user_group` WHERE `ID` = '".(int)$nID."'")){
 			return $arGroup['NAME'];
 		}
 
@@ -30,7 +30,7 @@ class UserGroup
 	function ID($nID)
 	{
 		global $LIB, $DB;
-		if ($arGroup = $DB->Row("SELECT * FROM `k2_user_group` WHERE `ID` = '".$nID."'")) {
+		if($arGroup = $DB->Row("SELECT * FROM `k2_user_group` WHERE `ID` = '".$nID."'")){
 
 			$arGroup['PERMISSION_DEFAULT'] = unserialize($arGroup['PERMISSION_DEFAULT']);
 			$arGroup['PERMISSION_SITE'] = unserialize($arGroup['PERMISSION_SITE']);
@@ -47,19 +47,19 @@ class UserGroup
 	{
 		global $LIB, $DB, $USER;
 
-		if ($sError = formCheck(array('NAME' => 'Название'))) {
+		if($sError = formCheck(array('NAME' => 'Название'))){
 			$this->Error = $sError;
 
 			return false;
 		}
 
-		if ($DB->Rows("SELECT 1 FROM `k2_user_group` WHERE `NAME` LIKE '".DBS($arPar['NAME'])."'")) {
+		if($DB->Rows("SELECT 1 FROM `k2_user_group` WHERE `NAME` LIKE '".DBS($arPar['NAME'])."'")){
 			$this->Error = 'Такая группа уже существует';
 
 			return false;
 		}
 
-		if ($nID = $DB->Insert("
+		if($nID = $DB->Insert("
 		INSERT INTO `k2_user_group`(
 			`NAME`,
 			`PERMISSION_DEFAULT`,
@@ -69,7 +69,7 @@ class UserGroup
 			'".DBS($arPar['NAME'])."', '".DBS(serialize($arPar['PERMISSION_DEFAULT']))."', '".DBS(serialize($arPar['PERMISSION_SITE']))."', '".DBS(serialize($arPar['PERMISSION_SECTION']))."'
 		);
 		")
-		) {
+		){
 			return $nID;
 		}
 
@@ -80,27 +80,27 @@ class UserGroup
 	{
 		global $LIB, $DB, $USER;
 
-		if (!$arGroup = $this->ID($nID)) {
+		if(!$arGroup = $this->ID($nID)){
 			return false;
 		}
 
-		if (!$bFull) {
+		if(!$bFull){
 			$arPar += $arGroup;
 		}
 
-		if ($sError = formCheck(array('NAME' => 'Название'), $arPar)) {
+		if($sError = formCheck(array('NAME' => 'Название'), $arPar)){
 			$this->Error = $sError;
 
 			return false;
 		}
 
-		if ($DB->Rows("SELECT 1 FROM `k2_user_group` WHERE `NAME` LIKE '".DBS($arPar['NAME'])."' AND `ID` != '".(int)$nID."'")) {
+		if($DB->Rows("SELECT 1 FROM `k2_user_group` WHERE `NAME` LIKE '".DBS($arPar['NAME'])."' AND `ID` != '".(int)$nID."'")){
 			$this->Error = 'Такая группа уже существует';
 
 			return false;
 		}
 
-		if ($DB->Query("UPDATE `k2_user_group`
+		if($DB->Query("UPDATE `k2_user_group`
         SET
 			`NAME` = '".DBS($arPar['NAME'])."',
 			`PERMISSION_DEFAULT` = '".DBS(serialize($arPar['PERMISSION_DEFAULT']))."',
@@ -109,7 +109,7 @@ class UserGroup
         WHERE
         	`ID` = '".$nID."';
         ")
-		) {
+		){
 			return $nID;
 		}
 
@@ -119,19 +119,19 @@ class UserGroup
 	function Delete($nID)
 	{
 		global $LIB, $DB, $USER;
-		if (!$arGroup = $this->ID($nID)) {
+		if(!$arGroup = $this->ID($nID)){
 			return false;
 		}
-		if ($USER['USER_GROUP'] != 1) {
+		if($USER['USER_GROUP'] != 1){
 			return;
 		}
-		if ($DB->Row("SELECT 1 FROM `k2_user` WHERE `USER_GROUP` = '".$arGroup['ID']."' LIMIT 1")) {
+		if($DB->Row("SELECT 1 FROM `k2_user` WHERE `USER_GROUP` = '".$arGroup['ID']."' LIMIT 1")){
 			$this->Error = 'Удаление невозможно. Сперва удалите всех пользователей из этой группы';
 
 			return false;
 		}
 
-		if ($DB->Query("DELETE FROM `k2_user_group` WHERE ID = '".$arGroup['ID']."'")) {
+		if($DB->Query("DELETE FROM `k2_user_group` WHERE ID = '".$arGroup['ID']."'")){
 			return true;
 		}
 
@@ -142,16 +142,16 @@ class UserGroup
 	{
 		global $LIB, $DB, $USER;
 
-		if ($USER['USER_GROUP'] != 1) {
+		if($USER['USER_GROUP'] != 1){
 			return false;
 		}
 
-		foreach ($arPar as $nGroup => $nPermission) {
-			if (!$nGroup) {
+		foreach($arPar as $nGroup => $nPermission){
+			if(!$nGroup){
 				$DB->Query("UPDATE `k2_section` SET `PERMISSION` = '".(int)$nPermission."' WHERE `ID` = '".(int)$nSection."'");
 				continue;
 			}
-			if (!$nPermission) {
+			if(!$nPermission){
 				continue;
 			}
 			$DB->Query("DELETE FROM `k2_section_permission` WHERE `USER_GROUP` = '".(int)$nGroup."' AND `SECTION` = '".(int)$nSection."'");

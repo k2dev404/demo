@@ -165,8 +165,78 @@ class Field
 	function Type()
 	{
 		$arType = array(
-			'INPUT' => array('NAME' => 'Строка', 'SETTING' => array('TYPE' => array('TEXT' => array('NAME' => 'Текст'), 'INT' => array('NAME' => 'Целое число', 'FORMAT' => 'INT'), 'FLOAT' => array('NAME' => 'Дробное число', 'FORMAT' => 'DECIMAL(11, 2)'), 'EMAIL' => array('NAME' => 'E-mail',), 'DATE' => array('NAME' => 'Дата', 'FORMAT' => 'DATE'), 'DATE_TIME' => array('NAME' => 'Дата и время', 'FORMAT' => 'DATETIME'),))), 'TEXTAREA' => array('NAME' => 'Текстовая область', 'FORMAT' => 'MEDIUMTEXT'), 'CHECKBOX' => array('NAME' => 'Истина или ложь', 'FORMAT' => 'TINYINT(1)'), 'SELECT' => array('NAME' => 'Список'), 'FILE' => array('NAME' => 'Файл'),
-			'REFERENCE' => array('NAME' => 'Связь', 'SETTING' => array('TYPE' => array('SECTION' => array('NAME' => 'Раздел'), 'USER' => array('NAME' => 'Пользователь'), 'CATEGORY' => array('NAME' => 'Категория'), 'ELEMENT' => array('NAME' => 'Элемент'), 'YANDEX_MAP' => array('NAME' => 'Я.Карта')))), 'HIDDEN' => array('NAME' => 'Скрытое', 'FORMAT' => 'TEXT')
+			'INPUT' => array(
+				'NAME' => 'Строка',
+				'SETTING' => array(
+					'TYPE' => array(
+						'TEXT' => array(
+							'NAME' => 'Текст'
+						),
+						'INT' => array(
+							'NAME' => 'Целое число',
+							'FORMAT' => 'INT'
+						),
+						'FLOAT' => array(
+							'NAME' => 'Дробное число',
+							'FORMAT' => 'DECIMAL(11, 2)'
+						),
+						'EMAIL' => array(
+							'NAME' => 'E-mail'
+						),
+						'PHONE' => array(
+							'NAME' => 'Телефон'
+						),
+						'DATE' => array(
+							'NAME' => 'Дата',
+							'FORMAT' => 'DATE'
+						),
+						'DATE_TIME' => array(
+							'NAME' => 'Дата и время',
+							'FORMAT' => 'DATETIME'
+						)
+					)
+				)
+			),
+			'TEXTAREA' => array(
+				'NAME' => 'Текстовая область',
+				'FORMAT' => 'MEDIUMTEXT'
+			),
+			'CHECKBOX' => array(
+				'NAME' => 'Истина или ложь',
+				'FORMAT' => 'TINYINT(1)'
+			),
+			'SELECT' => array(
+				'NAME' => 'Список'
+			),
+			'FILE' => array(
+				'NAME' => 'Файл'
+			),
+			'REFERENCE' => array(
+				'NAME' => 'Связь',
+				'SETTING' => array(
+					'TYPE' => array(
+						'SECTION' => array(
+							'NAME' => 'Раздел'
+						),
+						'USER' => array(
+							'NAME' => 'Пользователь'
+						),
+						'CATEGORY' => array(
+							'NAME' => 'Категория'
+						),
+						'ELEMENT' => array(
+							'NAME' => 'Элемент'
+						),
+						'YANDEX_MAP' => array(
+							'NAME' => 'Я.Карта'
+						)
+					)
+				)
+			),
+			'HIDDEN' => array(
+				'NAME' => 'Скрытое',
+				'FORMAT' => 'TEXT'
+			)
 		);
 
 		return $arType;
@@ -225,6 +295,11 @@ class Field
 				if ($arField['SETTING']['TYPE'] == 'EMAIL') {
 					if (!filter_var($arValue[0], FILTER_VALIDATE_EMAIL)) {
 						return 'В поле "'.$arField['NAME'].'" введите корректный адрес эл. почты';
+					}
+				}
+				if ($arField['SETTING']['TYPE'] == 'PHONE') {
+					if (!preg_match("#^\+7\(\d{3}\)\d{3}\-\d{2}\-\d{2}$#", $arValue[0])) {
+						return 'Введите номер телефона в формате +7(XXX)XXX-XX-XX';
 					}
 				}
 				if ($arField['SETTING']['TYPE'] == 'DATE') {

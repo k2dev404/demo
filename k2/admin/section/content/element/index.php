@@ -147,6 +147,7 @@ if($_CATEGORY){
 			</tr>
 	</table>
 	<form method="post" id="form">
+		<input type="hidden" name="session" value="<?=$USER['SESSION']?>">
 		<input type="hidden" name="section" value="<?=$_SECTION?>">
 		<input type="hidden" name="section_block" value="<?=$_SECTION_BLOCK?>">
 		<input type="hidden" name="category" value="<?=$_CATEGORY?>">
@@ -169,7 +170,7 @@ if($_CATEGORY){
 					'PREVIEW' => $arSettingView['PREVIEW']
 					));
 					?>
-					<td align="center" class="action"><a href="delete.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+					<td align="center" class="action"><a href="delete.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&section_block=<?=$_SECTION_BLOCK?>&category=<?=$_CATEGORY?>&id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 				</tr><?
 			}
 			if(!$i){
@@ -206,7 +207,7 @@ if($_CATEGORY){
 		            	data = $('#form').serialize();
 		                if(data.length){
 		                	if(val == 'delete'){
-		                		$.prompt(this, {'href':'/k2/admin/section/content/element/delete.php<?=$sURI?>', 'yes':'return actionDelete(1)', 'no':'return actionDelete(0)'});
+		                		$.prompt(this, {'href':'/k2/admin/section/content/element/delete.php<?=$sURI?>&session=<?=$USER['SESSION']?>', 'yes':'return actionDelete(1)', 'no':'return actionDelete(0)'});
 		                	}else{
                             	$('#form').attr('action', val+'.php').submit();
 		                	}

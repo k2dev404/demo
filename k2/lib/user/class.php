@@ -277,6 +277,8 @@ class User
 				$arUser['PERMISSION']['SITE'] = $arGroup['PERMISSION_SITE'];
 				$arUser['PERMISSION']['SECTION'] = $arGroup['PERMISSION_SECTION'];
 
+				$arUser['SESSION'] = session_id();
+
 				return $arUser;
 			}
 		} elseif ($_COOKIE['K2_AUTH'] && $_COOKIE['K2_AUTH'] != -1) {
@@ -316,6 +318,8 @@ class User
 				$arUser['PERMISSION']['SECTION'] = unserialize($arUser['_GROUP_PERMISSION_SECTION']);
 
 				unset($arUser['_GROUP_PERMISSION_DEFAULT'], $arUser['_GROUP_PERMISSION_SITE'], $arUser['_GROUP_PERMISSION_SECTION']);
+
+				$arUser['SESSION'] = session_id();
 
 				return $arUser;
 			}

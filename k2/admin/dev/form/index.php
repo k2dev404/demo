@@ -24,7 +24,7 @@ $K2->Menu('TAB');
 			?><tr goto="edit.php?id=<?=$arList[$i]['ID']?>">
 				<td align="center"><?=$arList[$i]['ID']?></td>
 				<td><a href="edit.php?id=<?=$arList[$i]['ID']?>"><?=html($arList[$i]['NAME'])?></a></td>
-				<td align="center"><a href="delete.php?id=<?=$arList[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+				<td align="center"><a href="delete.php?id=<?=$arList[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 			</tr><?
 		}
     	if(!$i){

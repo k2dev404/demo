@@ -2,6 +2,10 @@
 include_once($_SERVER['DOCUMENT_ROOT'] . '/k2/admin/header.php');
 permissionCheck('USER');
 
+if($_REQUEST['session'] != $USER['SESSION']){
+	exit();
+}
+
 if ($_ID) {
 	$LIB['USER']->Delete($_ID);
 }

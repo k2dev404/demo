@@ -31,7 +31,7 @@ tab(array(array('Настройки', '/setting/'), array('Списки', '/sett
 	            if($DB->Rows("SELECT 1 FROM `k2_section` WHERE `SITE` = ".$arSite[$i]['ID']." LIMIT 1")){
 	            	?><div class="icon empty"></div><?
 	            }else{
-	            	?><a href="delete.php?id=<?=$arSite[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><?
+	            	?><a href="delete.php?id=<?=$arSite[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><?
 	            }
 	            ?><a href="http://<?=$arSite[$i]['DOMAIN']?>" class="icon home" target="_blank" title="Перейти на сайт"></a><a href="edit.php?id=<?=$arSite[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 	        </tr><?

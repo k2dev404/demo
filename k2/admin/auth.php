@@ -3,8 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="/k2/admin/css/auth.css">
-	<script type="text/javascript" src="http://yandex.st/jquery/1.6.0/jquery.min.js"></script>
-	<script type="text/javascript" src="/k2/admin/js/java.js"></script>
+	<script src="/k2/admin/js/java.js"></script>
 	<title>K2CMS - Авторизация</title>
 </head>
 <body>
@@ -19,8 +18,7 @@
 					<div class="icon">
 						<div class="icon-login"></div>
 					</div>
-					<input type="text" name="AUTH_LOGIN" class="inp" autofocus
-					       value="<?=htmlspecialchars($_POST['AUTH_LOGIN'])?>"></td>
+					<input type="text" name="AUTH_LOGIN" class="inp" value="<?=htmlspecialchars($_POST['AUTH_LOGIN'])?>"></td>
 				<td>
 					<div class="icon">
 						<div class="icon-password"></div>
@@ -29,9 +27,8 @@
 				<td><input type="submit" class="sub" value="Войти"></td>
 			</tr>
 			<tr>
-				<td class="copy">&copy; 2015</td>
-				<td colspan="3"><label><input type="checkbox" name="AUTH_REMEMBER" value="1">Запомнить меня на этом
-						компьютере</label></td>
+				<td class="copy">&copy; 2016</td>
+				<td colspan="3"><label><input type="checkbox" name="AUTH_REMEMBER" value="1">Запомнить меня на этом компьютере</label></td>
 			</tr>
 		</table>
 	</form>

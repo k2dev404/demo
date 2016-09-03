@@ -43,7 +43,7 @@ if(!$arSection = $LIB['SECTION']->ID($_SECTION, 1)){
                 $arTotalContent = $DB->Rows("SELECT COUNT(ID) AS `TOTAL` FROM `k2_block".$arSection['BLOCK'][$i]['BLOCK']."` WHERE `SECTION_BLOCK` = '".$arSection['BLOCK'][$i]['ID']."'");
                 echo $arTotalContent[0]['TOTAL'];
 				?></a></td>
-				<td align="center"><a href="delete.php?id=<?=$arSection['BLOCK'][$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&id=<?=$arSection['BLOCK'][$i]['ID']?>" class="icon edit" title="Редактировать функционал"></a></td>
+				<td align="center"><a href="delete.php?id=<?=$arSection['BLOCK'][$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?section=<?=$_SECTION?>&id=<?=$arSection['BLOCK'][$i]['ID']?>" class="icon edit" title="Редактировать функционал"></a></td>
 			</tr><?
 	    }
      	if(!$i){

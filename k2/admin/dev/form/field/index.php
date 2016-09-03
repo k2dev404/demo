@@ -44,7 +44,7 @@ $arType = $LIB['FIELD']->Type();
 				}
 				?></td>
 				<td align="center"><?=($arField[$i]['REQUIRED']?'Да':'Нет')?></td>
-				<td align="center"><a href="delete.php?id=<?=$arField[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arField[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+				<td align="center"><a href="delete.php?id=<?=$arField[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arField[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 			</tr><?
 		}
      	if(!$i){

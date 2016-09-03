@@ -2,49 +2,51 @@
 
 class MySQL
 {
-	var $DB;
-
-	function MySQL()
+	function __construct()
 	{
-		return $this->Connect();
+		$this->Error = '';
+		$this->DB = $this->Connect();
+
+		$this->Query("SET NAMES 'utf8'");
+
+		mysqli_set_charset($this->DB, 'utf8');
+
+		return $this->DB;
 	}
 
 	function Connect()
 	{
-		if (!$rConnect = @mysql_connect(DB_HOST, DB_USER, DB_PASSWORD)) {
-			if (!defined('DB_HOST')) {
-				if ($_SERVER['REQUEST_URI'] != '/install/') {
+		if(!$rConnect = @mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_BASE)){
+			http_response_code(500);
+			if(!defined('DB_HOST')){
+				if($_SERVER['REQUEST_URI'] != '/install/'){
 					header('Location: /install/');
 				}
 			}
-			exit('Not connect to MySQL');
-		} else {
-			if (!mysql_select_db(DB_BASE, $rConnect)) {
-				exit('Not connect DB in MySQL');
-			} else {
-				return $this->DB = $rConnect;
-			}
+			exit('Can\'t connect to DB');
 		}
+
+		return $rConnect;
 	}
 
 	function Query($sSQL)
 	{
 		global $SETTING;
 
-		if ($SETTING['DEBUG_PANEL']) {
+		if($SETTING['DEBUG_PANEL']){
 			$nTime = microtime(1);
-			$rSQL = mysql_query($sSQL);
+			$rSQL = mysqli_query($this->DB, $sSQL);
 			$GLOBALS['DEBUG_SQL_TIME'] += round(microtime(1) - $nTime, 4);
 			$GLOBALS['DEBUG_SQL']['QUERY'][] = $sSQL;
 			$GLOBALS['DEBUG_SQL']['QUERY_TIME'][] = round(microtime(1) - $nTime, 4);
-		} else {
-			$rSQL = mysql_query($sSQL);
+		}else{
+			$rSQL = mysqli_query($this->DB, $sSQL);
 		}
 
-		if (!mysql_error($this->DB)) {
+		if(!mysqli_error($this->DB)){
 			return $rSQL;
-		} else {
-			$this->Error = mysql_error($this->DB);
+		}else{
+			$this->Error = mysqli_error($this->DB);
 
 			return false;
 		}
@@ -52,11 +54,11 @@ class MySQL
 
 	function Row($sSQL)
 	{
-		if (!$rResult = $this->Query($sSQL)) {
+		if(!$rResult = $this->Query($sSQL)){
 			return false;
 		}
 
-		return mysql_fetch_assoc($rResult);
+		return mysqli_fetch_assoc($rResult);
 	}
 
 	function Rows($sSQL, $nSize = 0)
@@ -65,32 +67,32 @@ class MySQL
 
 		$arRows = array();
 
-		if ($nSize) {
+		if($nSize){
 
 			$sSQL = str_replace('SELECT', 'SELECT SQL_CALC_FOUND_ROWS ', trim($sSQL));
-			if (substr($sSQL, -1, 1) == ';') {
+			if(substr($sSQL, -1, 1) == ';'){
 				$sSQL = substr($sSQL, 0, mb_strlen($sSQL, 'UTF-8') - 1);
 			}
 
 			$nPage = (int)$_GET['page'];
 			$nStart = 0;
-			if ($nPage > 1) {
+			if($nPage > 1){
 				$nStart = $nPage * $nSize - $nSize;
 			}
 			$sSQL_ = $sSQL.' LIMIT '.$nStart.', '.$nSize;
 
-			if (!$rResult = $this->Query($sSQL_)) {
+			if(!$rResult = $this->Query($sSQL_)){
 				return false;
 			}
-			$nCount = mysql_num_rows($rResult);
-			if (!$nCount) {
+			$nCount = mysqli_num_rows($rResult);
+			if(!$nCount){
 				$sSQL_ = $sSQL.' LIMIT 0, '.$nSize;
 				$rResult = $this->Query($sSQL_);
-				$nCount = mysql_num_rows($rResult);
+				$nCount = mysqli_num_rows($rResult);
 			}
 
-			for ($i = 0; $i < $nCount; $i++) {
-				$arRows[] = mysql_fetch_assoc($rResult);
+			for($i = 0; $i < $nCount; $i++){
+				$arRows[] = mysqli_fetch_assoc($rResult);
 			}
 			$arCount = $this->Row("SELECT FOUND_ROWS()");
 
@@ -101,11 +103,11 @@ class MySQL
 			return $arRows;
 		}
 
-		if (!$rResult = $this->Query($sSQL)) {
+		if(!$rResult = $this->Query($sSQL)){
 			return false;
 		}
-		for ($i = 0; $i < @mysql_num_rows($rResult); $i++) {
-			$arRows[] = mysql_fetch_assoc($rResult);
+		for($i = 0; $i < @mysqli_num_rows($rResult); $i++){
+			$arRows[] = mysqli_fetch_assoc($rResult);
 		}
 
 		return $arRows;
@@ -113,8 +115,8 @@ class MySQL
 
 	function Insert($sSQL)
 	{
-		if ($this->Query($sSQL)) {
-			return mysql_insert_id($this->DB);
+		if($this->Query($sSQL)){
+			return mysqli_insert_id($this->DB);
 		}
 
 		return false;
@@ -127,42 +129,41 @@ class MySQL
 
 		$sRet = 'SELECT SQL_CALC_FOUND_ROWS';
 
-		if ($arPar['SELECT']) {
+		if($arPar['SELECT']){
 			$bFirst = true;
-			foreach ($arPar['SELECT'] as $sValue) {
-				if (!$bFirst) {
+			foreach($arPar['SELECT'] as $sValue){
+				if(!$bFirst){
 					$sRet .= ', ';
 				}
 				$sVal = DBS($sValue);
-				if ($sVal == '*') {
+				if($sVal == '*'){
 					$sRet .= ' *';
-				} else {
+				}else{
 					$sRet .= ' `'.DBS($sValue).'`';
 				}
 				$bFirst = false;
 			}
-		} else {
+		}else{
 			$sRet .= ' *';
 		}
 
 		$sRet .= ' FROM `'.$arPar['FROM'].'`';
 
-		if ($arPar['WHERE']) {
+		if($arPar['WHERE']){
 			$bFirst = true;
 			$sRet .= ' WHERE';
-			foreach ($arPar['WHERE'] as $sKey => $sValue) {
-				if (!$bFirst) {
+			foreach($arPar['WHERE'] as $sKey => $sValue){
+				if(!$bFirst){
 					$sRet .= ' AND';
 				}
 
-				if ($sKey == '+SQL') {
+				if($sKey == '+SQL'){
 					$sRet .= ' '.$sValue;
 					continue;
 				}
 
 				$bFindOperation = false;
-				foreach($arOperation as $sOper)
-				{
+				foreach($arOperation as $sOper){
 					if(strpos($sKey, $sOper) !== false){
 						$sKey = str_replace($sOper, '', $sKey);
 						$sRet .= ' `'.DBS($sKey).'` '.$sOper.' \''.DBS($sValue).'\'';
@@ -178,14 +179,14 @@ class MySQL
 			}
 		}
 
-		if ($arPar['ORDER_BY']) {
+		if($arPar['ORDER_BY']){
 			$bFirst = true;
 			$sRet .= ' ORDER BY ';
-			foreach ($arPar['ORDER_BY'] as $sKey => $sValue) {
-				if ($sValue == 'RAND') {
+			foreach($arPar['ORDER_BY'] as $sKey => $sValue){
+				if($sValue == 'RAND'){
 					$sRet .= ' RAND()';
-				} else {
-					if (!$bFirst) {
+				}else{
+					if(!$bFirst){
 						$sRet .= ' ,';
 					}
 					$sRet .= ' `'.DBS($sKey).'` '.DBS($sValue);
@@ -194,14 +195,14 @@ class MySQL
 			}
 		}
 
-		if ($arPar['LIMIT']) {
+		if($arPar['LIMIT']){
 			$sRet .= ' LIMIT '.(int)$arPar['LIMIT'];
-		} elseif ($arPar['SIZE']) {
+		}elseif($arPar['SIZE']){
 			$nPage = (int)$_GET['page'];
 			$sRet .= ' LIMIT ';
 			$nStart = 0;
 			$arPar['SIZE'] = (int)$arPar['SIZE'];
-			if ($nPage > 1) {
+			if($nPage > 1){
 				$nStart = $nPage * $arPar['SIZE'] - $arPar['SIZE'];
 			}
 			$sRet .= $nStart.', '.$arPar['SIZE'];
@@ -214,16 +215,16 @@ class MySQL
 	{
 		global $DB;
 
-		if (!is_array($arTable)) {
+		if(!is_array($arTable)){
 			$arTable = array($arTable);
 		}
 		$sTime = '';
-		for ($i = 0; $i < count($arTable); $i++) {
-			if ($i) {
+		for($i = 0; $i < count($arTable); $i++){
+			if($i){
 				$sTime .= ', ';
 			}
 
-			if ($arRow = $DB->Row("CHECKSUM TABLE ".$arTable[$i]."")) {
+			if($arRow = $DB->Row("CHECKSUM TABLE ".$arTable[$i]."")){
 				$sTime .= $arRow['Checksum'];
 			}
 		}
@@ -233,29 +234,29 @@ class MySQL
 
 	function Dump($sFile)
 	{
-		if ($sQuery = file_get_contents($sFile)) {
+		if($sQuery = file_get_contents($sFile)){
 			$sQuery = str_replace("\r", '', $sQuery);
 			$arQuery = explode("\n", $sQuery);
 			$i = 0;
 			$this->Error = false;
-			while ($i < count($arQuery)) {
+			while($i < count($arQuery)){
 				$sQuery = trim($arQuery[$i]);
-				if (mb_strlen($sQuery)) {
-					while (mb_substr($sQuery, mb_strlen($sQuery) - 1, 1) <> ';' && mb_substr($sQuery, 0, 1) <> '#' && mb_substr($sQuery, 0, 2) <> '--' && $i + 1 < count($arQuery)) {
+				if(mb_strlen($sQuery)){
+					while(mb_substr($sQuery, mb_strlen($sQuery) - 1, 1) <> ';' && mb_substr($sQuery, 0, 1) <> '#' && mb_substr($sQuery, 0, 2) <> '--' && $i + 1 < count($arQuery)){
 						$i++;
 						$sQuery .= "\n".$arQuery[$i];
 					}
 					$sQuery = trim($sQuery);
-					if (mb_substr($sQuery, 0, 1) <> '#' && mb_substr($sQuery, 0, 2) <> '--' && $sQuery != '') {
-						@mysql_query($sQuery, $this->DB);
-						if (mysql_error($this->DB)) {
-							$this->Error = mysql_error($this->DB);
+					if(mb_substr($sQuery, 0, 1) <> '#' && mb_substr($sQuery, 0, 2) <> '--' && $sQuery != ''){
+						@mysqli_query($this->DB, $sQuery);
+						if(mysqli_error($this->DB)){
+							$this->Error = mysqli_error($this->DB);
 						}
 					}
 				}
 				$i++;
 			}
-			if ($this->Error) {
+			if($this->Error){
 				return false;
 			}
 		}

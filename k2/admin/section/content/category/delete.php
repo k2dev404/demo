@@ -2,6 +2,10 @@
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SECTION_CONTENT');
 
+if($_REQUEST['session'] != $USER['SESSION']){
+	exit();
+}
+
 if($_ID){
 	$LIB['BLOCK_CATEGORY']->Delete($_ID, $_SECTION_BLOCK);
 }

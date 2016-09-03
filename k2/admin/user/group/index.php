@@ -31,7 +31,7 @@ tab(array(array('Пользователи', '/user/'), array('Группы', '/u
 				if($DB->Row("SELECT 1 FROM `k2_user` WHERE `USER_GROUP` = '".$arList[$i]['ID']."' LIMIT 1")){
                 	?><div class="icon empty"></div><?
 				}else{
-					?><a href="delete.php?id=<?=$arList[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><?
+					?><a href="delete.php?id=<?=$arList[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><?
 				}
 				?><a href="edit.php?id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 			</tr><?

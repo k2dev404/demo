@@ -11,7 +11,6 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/inc/function.php');
 	<script type="text/javascript" src="/k2/admin/js/jquery.layer.js"></script>
 	<script type="text/javascript" src="/k2/admin/tinymce/jquery.tinymce.min.js"></script>
 	<script type="text/javascript" src="/k2/admin/tinymce/init.js"></script>
-	<script type="text/javascript" src="/k2/admin/setting/update/check/"></script>
 	<?
 	if($SETTING['CODE_HIGHLIGHTER']){
 		?>
@@ -33,9 +32,6 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/inc/function.php');
 	<title>K2CMS: <?=$_SERVER['HTTP_HOST']?></title>
 </head>
 <body>
-<?
-include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/setting/update/check.php');
-?>
 <table width="100%" class="h">
 	<tr class="top under">
 		<td class="l"></td>
@@ -105,15 +101,19 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/setting/update/check.php');
 	<tr class="b3">
 		<td valign="top">
 			<div class="panel">
-				<div class="l"><a href="http://<?=$arActiveDomain['DOMAIN']?>" class="icon home" target="_blank"
-				                  title="Перейти на сайт"></a><a href="#" class="icon resize controlTree"
-				                                                 title="Развернуть/свернуть карту разделов"></a></div>
-				<div class="r"><a href="/k2/admin/section/add.php" class="button">Добавить раздел</a></div>
+				<div class="l">
+					<a href="http://<?=$arActiveDomain['DOMAIN']?>" class="icon home" target="_blank" title="Перейти на сайт"></a>
+					<a href="#" class="icon resize controlTree" title="Развернуть/свернуть карту разделов"></a>
+				</div>
+				<div class="r">
+					<a href="/k2/admin/section/add.php" class="button">Добавить раздел</a>
+				</div>
 				<div class="clear"></div>
 			</div><?
 			$nTreeWidth = $_COOKIE['K2_TREE_WIDTH'] ? $_COOKIE['K2_TREE_WIDTH'] : 300;
 			?>
 			<div id="tree" style="width:<?=$nTreeWidth?>px">
+				<input type="hidden" name="session" value="<?=$USER['SESSION']?>">
 				<div id="tree-box" style="width:<?=$nTreeWidth?>px; overflow:hidden;">
 					<div id="tree-content" style="display:none"><?
 						if(!($sMap = $MOD['CACHE']->GetVar(900, 'admin-tree'.$arActiveDomain['ID'].$DB->LastUpdate('k2_section')))){

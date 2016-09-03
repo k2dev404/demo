@@ -45,7 +45,7 @@ if($_POST){
 			<div class="field"><textarea name="CONTROLLER" cols="40" rows="6" data-code="true"><?=html($_POST['CONTROLLER'])?></textarea></div>
 		</div>
 		<div class="item">
-			<div class="name">Шаблон списка</div>
+			<div class="name">Шаблон</div>
 			<div class="field"><textarea name="TEMPLATE" cols="40" rows="6" data-code="true"><?=html($_POST['TEMPLATE'])?></textarea></div>
 		</div>
 		<div class="item">

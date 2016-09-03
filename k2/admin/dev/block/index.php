@@ -36,7 +36,7 @@ $K2->Menu('TAB');
 				if($arBlock){
 	            	?><div class="icon empty"></div><?
 				}else{
-					?><a href="/k2/admin/dev/group/delete.php?id=<?=$arGroup[$i]['ID']?>" onclick="return $.prompt(this)" class="icon deleteWhite" title="Удалить группу"></a><?
+					?><a href="/k2/admin/dev/group/delete.php?id=<?=$arGroup[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon deleteWhite" title="Удалить группу"></a><?
 				}
 				?><a href="#" onclick="$.layer({'get':'/k2/admin/dev/group/edit.php?id=<?=$arGroup[$i]['ID']?>', 'title':'Редактировать группу', w:398}, function(){k2.group.edit()})" class="icon editWhite" title="Редактировать группу"></a></td>
 			</tr><?
@@ -45,7 +45,7 @@ $K2->Menu('TAB');
 				?><tr goto="edit.php?id=<?=$arBlock[$n]['ID']?>">
 					<td><?=$arBlock[$n]['ID']?></td>
 					<td align="left"><a href="edit.php?id=<?=$arBlock[$n]['ID']?>"><?=html($arBlock[$n]['NAME'])?></a></td>
-					<td align="center" nowrap><a href="delete.php?id=<?=$arBlock[$n]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arBlock[$n]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+					<td align="center" nowrap><a href="delete.php?id=<?=$arBlock[$n]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arBlock[$n]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 				</tr><?
 			}
 		}

@@ -32,7 +32,7 @@ tab(array(array('Настройки', '/setting/'), array('Списки', '/sett
 			    $arSelect_ = $LIB['SELECT']->ID($arSelect[$i]['ID']);
 				echo count($arSelect_['OPTION']);
 				?></td>
-				<td align="center"><a href="delete.php?id=<?=$arSelect[$i]['ID']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arSelect[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
+				<td align="center"><a href="delete.php?id=<?=$arSelect[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a><a href="edit.php?id=<?=$arSelect[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
 			</tr><?
 		}
      	if(!$i){

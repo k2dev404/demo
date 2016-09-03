@@ -1,5 +1,5 @@
 <?
-include_once($_SERVER['DOCUMENT_ROOT'] . '/k2/admin/header.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('USER');
 tab(array(array('Пользователи', '/user/', 1), array('Группы', '/user/group/')));
 ?>
@@ -12,15 +12,15 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 	$arField['USER_GROUP'] = array('NAME' => 'Группа', 'FORMAT' => 'USER_GROUP', 'ALIGN' => 'left', 'ACTIVE' => 1);
 	$arField = fieldFormat('k2_user', $arField);
 
-	if ($arSettingView = userSettingView(false, array('TYPE' => 10))) {
+	if($arSettingView = userSettingView(false, array('TYPE' => 10))){
 		$arRows = $DB->Rows("SHOW COLUMNS FROM `k2_user`");
-		for ($i = 0; $i < count($arRows); $i++) {
+		for($i = 0; $i < count($arRows); $i++){
 			$arIssetField[$arRows[$i]['Field']] = 1;
 		}
 		$arNewField = array();
 		$arData = unserialize($arSettingView['DATA']);
-		foreach ($arData as $sKey => $arValue) {
-			if ($arIssetField[$sKey]) {
+		foreach($arData as $sKey => $arValue){
+			if($arIssetField[$sKey]){
 				$arNewField[$sKey] = ($arField[$sKey]['NAME'] ? $arField[$sKey] : $arValue);
 				$arNewField[$sKey]['ACTIVE'] = $arValue['ACTIVE'];
 				$arNewField[$sKey]['ALIGN'] = $arValue['ALIGN'];
@@ -38,23 +38,23 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 
 	$nLimit = 20;
 	$arSort = array('FIELD' => 'ID', 'METHOD' => 'asc');
-	if ($arRows = userSettingSession(true)) {
-		if ($arField[$arRows['PAGE_SORT']['FIELD']]) {
+	if($arRows = userSettingSession(true)){
+		if($arField[$arRows['PAGE_SORT']['FIELD']]){
 			$arSort = $arRows['PAGE_SORT'];
 		}
-		if ($arRows['PAGE_SIZE'] > 1) {
+		if($arRows['PAGE_SIZE'] > 1){
 			$nLimit = $arRows['PAGE_SIZE'];
 		}
 	}
 
-	$QB->OrderBy('U.' . $arSort['FIELD'] . ' ' . $arSort['METHOD']);
+	$QB->OrderBy('U.'.$arSort['FIELD'].' '.$arSort['METHOD']);
 
 	$nOffset = 0;
-	if ($_PAGE > 1) {
+	if($_PAGE > 1){
 		$nOffset = $_PAGE * $nLimit - $nLimit;
 	}
 
-	$QB->Limit($nOffset . ', ' . $nLimit);
+	$QB->Limit($nOffset.', '.$nLimit);
 
 	$arTableHead[] = array('HTML' => '<th width="1%" class="first"><input type="checkbox" title="Отметить поля" onclick="table.check.all(this, \'.table-body\')"></th>');
 
@@ -68,7 +68,7 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 
 	$nPage = $_PAGE;
 	$sNav = navPage($arCount['FOUND_ROWS()'], $nLimit);
-	if ($nPage > $_PAGE) {
+	if($nPage > $_PAGE){
 		Redirect('/k2/admin/user/');
 	}
 
@@ -85,28 +85,31 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 		</tr>
 	</table>
 	<form method="post" id="form">
+		<input type="hidden" name="session" value="<?=$USER['SESSION']?>">
 		<table width="100%" class="table">
 			<tr><?=tableHead($arTableHead, $arSort);?></tr>
 			<tbody class="table-body"><?
-			for ($i = 0; $i < count($arList); $i++) {
+			for($i = 0; $i < count($arList); $i++){
 				?>
 				<tr class="<?
-				if ($i % 2) {
-					?> odd<?
-				}
-				if (!$arList[$i]['ACTIVE']) {
+				if(!$arList[$i]['ACTIVE']){
 					?> passive<?
 				}
 				?>" goto="edit.php?id=<?=$arList[$i]['ID']?>">
-				<td><input type="checkbox" name="ID[]" value="<?=$arList[$i]['ID']?>"></td><?
-				tableBody(array('CONTENT' => $arList[$i], 'FIELD' => $arField, 'USER_LOGIN' => $arUserLogin, 'PREVIEW' => $arSettingView['PREVIEW']));
-				?>
-				<td align="center"><a href="delete.php?id=<?=$arList[$i]['ID']?>" onclick="return $.prompt(this)"
-				                      class="icon delete" title="Удалить"></a><a
-						href="edit.php?id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a></td>
-				</tr><?
+					<td>
+						<input type="checkbox" name="ID[]" value="<?=$arList[$i]['ID']?>">
+					</td>
+					<?
+					tableBody(array('CONTENT' => $arList[$i], 'FIELD' => $arField, 'USER_LOGIN' => $arUserLogin, 'PREVIEW' => $arSettingView['PREVIEW']));
+					?>
+					<td align="center">
+						<a href="delete.php?id=<?=$arList[$i]['ID']?>&session=<?=$USER['SESSION']?>" onclick="return $.prompt(this)" class="icon delete" title="Удалить"></a>
+						<a href="edit.php?id=<?=$arList[$i]['ID']?>" class="icon edit" title="Редактировать"></a>
+					</td>
+				</tr>
+				<?
 			}
-			if (!$i) {
+			if(!$i){
 				?>
 				<tr class="noblick empty">
 				<td colspan="<?=count($arTableHead) + 2?>" align="center" height="100">Нет данных</td>
@@ -153,10 +156,10 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 			</td>
 			<td align="right">На странице <select id="sizePage" url="/k2/admin/user/?"><?
 					$arSize = array(10, 20, 50, 100);
-					for ($i = 0; $i < count($arSize); $i++) {
+					for($i = 0; $i < count($arSize); $i++){
 						?>
 						<option<?
-						if ($nLimit == $arSize[$i]) {
+						if($nLimit == $arSize[$i]){
 							?> selected<?
 						}
 						?>><?=$arSize[$i]?></option><?
@@ -165,5 +168,5 @@ tab(array(array('Пользователи', '/user/', 1), array('Группы', 
 		</tr>
 	</table>
 	</div><?
-include_once($_SERVER['DOCUMENT_ROOT'] . '/k2/admin/footer.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/footer.php');
 ?>

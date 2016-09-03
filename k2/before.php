@@ -1,5 +1,5 @@
 <?
-if (!@$CURRENT) {
+if(!@$CURRENT){
 	exit;
 }
 
@@ -9,9 +9,9 @@ if($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'){
 
 $MOD['SEO']->Start();
 
-if ($GLOBALS['NAV']) {
-	foreach ($GLOBALS['NAV'] as $nNav) {
-		$DELAYED_VARIABLE['NAV' . $nNav] = $LIB['NAV']->BackResult($nNav);
+if($GLOBALS['NAV']){
+	foreach($GLOBALS['NAV'] as $nNav){
+		$DELAYED_VARIABLE['NAV'.$nNav] = $LIB['NAV']->BackResult($nNav);
 	}
 }
 ?>
