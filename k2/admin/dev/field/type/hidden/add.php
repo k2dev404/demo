@@ -1,0 +1,1 @@
+<div class="item">	<input type="hidden" name="REQUIRED" value="0"><label><input type="checkbox" name="REQUIRED" value="1"<?	if($_POST['REQUIRED']){		?> checked="checked"<?	}	?>>Обязательное для заполнение</label></div>

@@ -1,0 +1,6 @@
+User-agent: Yandex
+Allow: /catalog
+Disallow: /cart/
+Clean-param: set_city /
+Clean-param: sort /catalog/
+Sitemap: http://teplomak.php/sitema.xml

@@ -1,0 +1,34 @@
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+
+Options -Indexes
+Options +FollowSymLinks
+
+php_value magic_quotes_gpc off
+php_value register_globals off
+
+# Увеличиваем размер лимита на файлы загрузки
+# php_value upload_max_filesize 999M
+# php_value post_max_size 999M
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteBase /
+
+	# Перенаправление домена на www
+	# RewriteCond %{HTTP_HOST} !^www\.example.com(.*) [NC]
+	# RewriteRule ^(.*)$ http://www.example.com/$1 [R=301,L]
+
+	# Добавление слеша на конце пути
+	# RewriteCond %{REQUEST_FILENAME} !-f
+	# RewriteCond %{REQUEST_FILENAME} !-d
+	# RewriteCond %{REQUEST_URI} !\.(ico|gif|jpg|jpeg|png|js|css)$
+	# RewriteCond %{REQUEST_URI} !(.*)/$
+	# RewriteRule ^(.*[^/])$ $1/ [L,R=301]
+
+	# Передаем запрос обработчику
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_URI} !\.(ico|gif|jpg|jpeg|png|js|css)$
+	RewriteRule ^(.*)$ /k2/content.php?PATH=/$1 [L,QSA]
+</IfModule>

@@ -1,0 +1,1 @@
+<div style="display:inline-block; background:#f4e0e0; border:1px solid #efc8c1; padding:6px 15px 5px 15px; color:#ad311c; line-height:24px; font-size:12px;">У вас нет прав доступа к этой странице</div>
