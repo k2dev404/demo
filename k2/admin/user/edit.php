@@ -1,7 +1,8 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'] . '/k2/admin/header.php');
 permissionCheck('USER');
-tab(array(array('Пользователи', '/user/', 1), array('Группы', '/user/group/')));
+$K2->Menu('TAB');
+
 if (!$arUser = $LIB['USER']->ID($_ID, 1)) {
 	Redirect('/k2/admin/user/');
 }

@@ -1,7 +1,7 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SETTING');
-tab(array(array('Настройки', '/setting/'), array('Списки', '/setting/select/'), array('Сайты', '/setting/site/'), array('Обновления', '/setting/update/', 1), array('Инструменты', '/setting/tool/')));
+$K2->Menu('TAB');
 
 $sFileUpdate = $_SERVER['DOCUMENT_ROOT'].'/tmp/k2update.zip';
 $sDirUpdate = $_SERVER['DOCUMENT_ROOT'].'/tmp/update/';

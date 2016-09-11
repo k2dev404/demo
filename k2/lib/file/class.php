@@ -1,24 +1,108 @@
 <?
 
+class FFile
+{
+	var $Error = false;
+
+	static function Size($sFile, $nByte = true)
+	{
+		if(file_exists($sFile)){
+			$nSize = filesize($sFile);
+
+			if($nByte){
+				$arByte = array('b', 'Kb', 'Mb', 'Gb', 'Tb');
+				for($i = 0; $nSize >= 1024 && $i < 4; $i++){
+					$nSize /= 1024;
+				}
+
+				return round($nSize).' '.$arByte[$i];
+			}
+
+			return $nSize;
+		}
+
+		return false;
+	}
+
+	static function Icon($sName, $sPath = '/k2/admin/i/ext/', $sExt = 'empty.png')
+	{
+		$arMatrixExt = [
+			'excel' => ['xls', 'xlsx', 'xlsm', 'xlsb', 'xltm', 'xlam', 'xlt'],
+			'film' => ['avi', 'wmv', 'mpg', 'mpeg', 'mkv', 'm2ts', '3gp', 'dat', 'm4v', 'mov', 'rm', 'vob'],
+			'flash-movie' => ['flv'],
+			'flash' => ['swf', 'fla'],
+			'globe' => ['html', 'htm', 'xml', 'xls'],
+			'illustrator' => ['ai', 'eps'],
+			'image' => ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'tif', 'tiff'],
+			'music' => ['mp3', 'amr', 'ape', 'bin', 'flac', 'm4a', 'mdi', 'ram'],
+			'office' => ['ppsx', 'pptm', 'pptx', 'xlsm'],
+			'outlook' => ['eml', 'dbx', 'nch', 'ods', 'ost'],
+			'pdf' => ['pdf'],
+			'photoshop' => ['psd'],
+			'php' => ['php', 'php3', 'php4', 'php5', 'phtml'],
+			'powerpoint' => ['ppt', 'pot', 'pps'],
+			'text' => ['sql', 'db', 'rtf', 'ini', 'txt', 'log'],
+			'word' => ['doc', 'docx', 'dotx', 'odt'],
+			'zipper' => ['zip', 'rar', '7z', 'z', 'tag', 'gz', 'tgz', 'arj', 'lha', 'uc2', 'ace', 'zix', 'w02', '7zip']
+		];
+
+		if(preg_match("#.*\.(.*)$#i", $sName, $arMath)){
+			$sFoundExt = strtolower($arMath[1]);
+			foreach($arMatrixExt as $sExtName => $arExt){
+				if(in_array($sFoundExt, $arExt)){
+					if(file_exists($_SERVER['DOCUMENT_ROOT'].$sPath.$sExtName.'.png')){
+						$sExt = $sExtName.'.png';
+						break;
+					}
+				}
+			}
+		}
+
+		return $sExt;
+	}
+
+	static function Upload($arFile, $sDir = '/')
+	{
+		if(!is_uploaded_file($arFile['tmp_name']) || $arFile['error']){
+			return false;
+		}
+
+		$sFullPath = $_SERVER['DOCUMENT_ROOT'].$sDir.$arFile['name'];
+
+		if(copy($arFile['tmp_name'], $sFullPath)){
+			chmod($sFullPath, CHMOD_FILE);
+			return true;
+		}
+
+		return false;
+	}
+
+	static function Delete($sPath)
+	{
+		unlink($_SERVER['DOCUMENT_ROOT'].$sPath);
+		return !file_exists($_SERVER['DOCUMENT_ROOT'].$sPath);
+	}
+}
+
 class File
 {
 	function ID($nID)
 	{
 		global $DB;
 
-		if (!$this->FILE) {
+		if(!$this->FILE){
 			$arRows = $DB->Rows("SELECT * FROM `k2_file`");
-			for ($i = 0; $i < count($arRows); $i++) {
+			for($i = 0; $i < count($arRows); $i++){
 				$arRows[$i]['PATH'] = '/files/original/'.$arRows[$i]['PATH'];
-				if ($arRows[$i]['PREVIEW']) {
+				if($arRows[$i]['PREVIEW']){
 					$arRows[$i]['PREVIEW'] = unserialize($arRows[$i]['PREVIEW']);
-				} else {
+				}else{
 					$arRows[$i]['PREVIEW'] = array();
 				}
 				$this->FILE[$arRows[$i]['ID']] = $arRows[$i];
 			}
 		}
-		if ($this->FILE[$nID]) {
+		if($this->FILE[$nID]){
 			return $this->FILE[$nID];
 		}
 		$this->Error = 'Файл не найден';
@@ -33,15 +117,15 @@ class File
 		unset($arExp[count($arExp) - 1]);
 		$sDirPath = implode("/", $arExp);
 		@mkdir($_SERVER['DOCUMENT_ROOT'].$sDirPath, CHMOD_DIR, true);
-		if (substr($sPath, -1, 1) != '/') {
-			if (!$this->Edit($sPath, $sContent, 'w')) {
+		if(substr($sPath, -1, 1) != '/'){
+			if(!$this->Edit($sPath, $sContent, 'w')){
 				$this->Error = changeMessage($sFullPath, 'FILE_WRITE');
 
 				return false;
 			}
 			chmod($sFullPath, CHMOD_FILE);
-		} else {
-			if (file_exists($sFullPath)) {
+		}else{
+			if(file_exists($sFullPath)){
 				$this->Error = changeMessage($sFullPath, 'FILE_CREATED_DIR');
 
 				return false;
@@ -55,10 +139,10 @@ class File
 	{
 		global $DB, $LIB, $USER;
 
-		if (!$arPar['FULL_PATH']) {
+		if(!$arPar['FULL_PATH']){
 			$sPath = $_SERVER['DOCUMENT_ROOT'].$sPath;
 		}
-		if (!file_exists($sPath)) {
+		if(!file_exists($sPath)){
 			$this->Error = 'Укажите правильный путь к файлу';
 
 			return false;
@@ -70,38 +154,38 @@ class File
 
 		$arFileInfo = pathinfo($arPar['NAME']);
 
-		if (!$arFileInfo['extension']) {
+		if(!$arFileInfo['extension']){
 			return false;
 		}
 
 		$sFile = md5(microtime()).'.'.strtolower($arFileInfo['extension']);
-		if ($arPar['TRANSLATION']) {
+		if($arPar['TRANSLATION']){
 			$sFile = fileTranslation($arFileInfo['filename']).'.'.strtolower($arFileInfo['extension']);
 		}
 
-		for ($i = 0; $i < 1000; $i++) {
-			if ($i) {
+		for($i = 0; $i < 1000; $i++){
+			if($i){
 				$sDir = genPassword(3, true).'/';
-			} else {
+			}else{
 				$sDir = substr($sFile, 0, 3).'/';
 			}
 			$sDirOrig = '/files/original/'.$sDir;
 			$sDirFileFull = $_SERVER['DOCUMENT_ROOT'].$sDirOrig.$sFile;
 
-			if (!file_exists($sDirFileFull)) {
+			if(!file_exists($sDirFileFull)){
 				break;
 			}
 		}
 
 		@mkdir($_SERVER['DOCUMENT_ROOT'].$sDirOrig, CHMOD_DIR, true);
-		if (copy($sPath, $sDirFileFull)) {
+		if(copy($sPath, $sDirFileFull)){
 			chmod($sDirFileFull, CHMOD_FILE);
-			if ($arPhotoProp = @getimagesize($sDirFileFull) && ($arPar['WIDTH'] || $arPar['HEIGHT'])) {
+			if($arPhotoProp = @getimagesize($sDirFileFull) && ($arPar['WIDTH'] || $arPar['HEIGHT'])){
 				$LIB['PHOTO']->Resize(array('PATH' => $sDirOrig.$sFile, 'WIDTH' => $arPar['WIDTH'], 'HEIGHT' => $arPar['HEIGHT'], 'FIX' => $arPar['FIX'], 'MARK' => $arPar['MARK']));
 			}
 			clearstatcache();
 			$arFileProp = @getimagesize($sDirFileFull);
-			if ($nID = $DB->Insert("INSERT INTO `k2_file` (
+			if($nID = $DB->Insert("INSERT INTO `k2_file` (
 	        		`DATE_CREATED`,
 	        		`USER`,
 	        		`NAME`,
@@ -122,7 +206,7 @@ class File
 		        	'".(int)$arFileProp[1]."',
 		        	'".(int)$arPar['DIR']."'
 		        )")
-			) {
+			){
 				return $nID;
 			}
 		}
@@ -136,7 +220,7 @@ class File
 
 		$QB = new QueryBuilder;
 		$QB->From('k2_field')->Select('FIELD')->Where('`TYPE` = 4 AND `TABLE` = ?', $arPar['TABLE']);
-		if ($arPar['FIELD']) {
+		if($arPar['FIELD']){
 			$QB->Where('ID = ?', $arPar['FIELD']);
 		}
 
@@ -144,16 +228,16 @@ class File
 		$QB = new QueryBuilder;
 		$QB->From($arPar['TABLE']);
 
-		if ($arPar['ELEMENT']) {
+		if($arPar['ELEMENT']){
 			$QB->Where('ID = ?', $arPar['ELEMENT']);
 		}
-		for ($i = 0; $i < count($arField); $i++) {
+		for($i = 0; $i < count($arField); $i++){
 			$QB->Select($arField[$i]['FIELD']);
 		}
 
 		$arElement = $DB->Rows($QB->Build());
-		for ($i = 0; $i < count($arElement); $i++) {
-			for ($j = 0; $j < count($arField); $j++) {
+		for($i = 0; $i < count($arElement); $i++){
+			for($j = 0; $j < count($arField); $j++){
 				$this->Delete($arElement[$i][$arField[$j]['FIELD']]);
 			}
 		}
@@ -163,10 +247,10 @@ class File
 	{
 		global $DB;
 		$arList = clearArray(explode(',', $mID));
-		for ($i = 0; $i < count($arList); $i++) {
-			if ($arFile = $this->ID($arList[$i])) {
-				if ($arFile['PREVIEW']) {
-					foreach ($arFile['PREVIEW'] as $sKey => $arArray) {
+		for($i = 0; $i < count($arList); $i++){
+			if($arFile = $this->ID($arList[$i])){
+				if($arFile['PREVIEW']){
+					foreach($arFile['PREVIEW'] as $sKey => $arArray){
 						unlink($_SERVER['DOCUMENT_ROOT'].$sKey);
 						preg_match("#^(.+)/.+?\..+?$#i", $sKey, $arMath);
 						//@rmdir($_SERVER['DOCUMENT_ROOT'].$arMath[1]);
@@ -182,14 +266,14 @@ class File
 
 	function Upload($arPar)
 	{
-		if (!is_uploaded_file($arPar['tmp_name']) || $arPar['error']) {
+		if(!is_uploaded_file($arPar['tmp_name']) || $arPar['error']){
 			$this->Error = 'Файл не загружен';
 
 			return false;
 		}
 		$arPar['FULL_PATH'] = 1;
 		$arPar['NAME'] = $arPar['name'];
-		if ($nID = $this->Add($arPar['tmp_name'], $arPar)) {
+		if($nID = $this->Add($arPar['tmp_name'], $arPar)){
 			return $nID;
 		}
 
@@ -199,15 +283,15 @@ class File
 	function Read($sPath)
 	{
 		$sFullPath = $_SERVER['DOCUMENT_ROOT'].$sPath;
-		if ($sCont = @file_get_contents($sFullPath)) {
+		if($sCont = @file_get_contents($sFullPath)){
 			return $sCont;
-		} else {
+		}else{
 			$arAnalytic = $this->Analytic($sFullPath);
-			if (!$arAnalytic['EXISTS']) {
+			if(!$arAnalytic['EXISTS']){
 				$this->Error = changeMessage($sFullPath, 'FILE_EXIST');
 
 				return false;
-			} elseif (!$arAnalytic['READABLE']) {
+			}elseif(!$arAnalytic['READABLE']){
 				$this->Error = changeMessage($sFullPath, 'FILE_READABLE');
 
 				return false;
@@ -219,15 +303,15 @@ class File
 	{
 		$sFullPath = $_SERVER['DOCUMENT_ROOT'].$sPath;
 		$rFile = @fopen($sFullPath, $sKey);
-		if (@fwrite($rFile, $sContent) !== false) {
+		if(@fwrite($rFile, $sContent) !== false){
 			return true;
-		} else {
+		}else{
 			$arAnalytic = $this->Analytic($sFullPath);
-			if (!$arAnalytic['EXISTS']) {
+			if(!$arAnalytic['EXISTS']){
 				$this->Error = changeMessage($sFullPath, 'FILE_EXISTS');
 
 				return false;
-			} elseif (!$arAnalytic['WRITABLE']) {
+			}elseif(!$arAnalytic['WRITABLE']){
 				$this->Error = changeMessage($sFullPath, 'FILE_WRITABLE');
 
 				return false;
@@ -244,17 +328,17 @@ class File
 
 	function Check($arFile, $arPar)
 	{
-		if (!$arFile['name'] || $arFile['error']) {
+		if(!$arFile['name'] || $arFile['error']){
 			return 'Загрузите файл в поле "'.$arPar['FIELD_NAME'].'""';
 		}
 
-		if ($arPar['TYPE']) {
+		if($arPar['TYPE']){
 			preg_match("#.+\.(.+?)$#i", $arFile['name'], $arMath);
 			$sExt = strtolower($arMath[1]);
 
-			if ($arPar['TYPE'] == 'IMAGE') {
+			if($arPar['TYPE'] == 'IMAGE'){
 				$arExt = array('jpg', 'jpeg', 'gif', 'png');
-				if (!in_array($sExt, $arExt) || !preg_match("#^image/#", $arFile['type'])) {
+				if(!in_array($sExt, $arExt) || !preg_match("#^image/#", $arFile['type'])){
 					return 'В поле &laquo;'.$arPar['FIELD_NAME'].'&raquo; неверный тип файла';
 				}
 			}
@@ -263,11 +347,11 @@ class File
 
 	function IsPhoto($nID)
 	{
-		if (!$arFile = $this->ID($nID)) {
+		if(!$arFile = $this->ID($nID)){
 			return false;
 		}
 		preg_match("#.+\.(.+?)$#i", $arFile['NAME'], $arMath);
-		if (!in_array(strtolower($arMath[1]), array('jpg', 'jpeg', 'gif', 'png')) || !preg_match("#^image/#", $arFile['TYPE'])) {
+		if(!in_array(strtolower($arMath[1]), array('jpg', 'jpeg', 'gif', 'png')) || !preg_match("#^image/#", $arFile['TYPE'])){
 			return false;
 		}
 

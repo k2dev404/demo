@@ -1,7 +1,8 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SETTING');
-tab(array(array('Настройки', '/setting/'), array('Списки', '/setting/select/'), array('Сайты', '/setting/site/', 1), array('Обновления', '/setting/update/'), array('Инструменты', '/setting/tool/')));
+$K2->Menu('TAB');
+
 if($_POST){
 	if($nID = $LIB['SITE']->Add($_POST)){
 		if($_POST['BAPPLY_x']){

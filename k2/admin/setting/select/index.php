@@ -1,7 +1,8 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SELECT');
-tab(array(array('Настройки', '/setting/'), array('Списки', '/setting/select/', 1), array('Сайты', '/setting/site/'), array('Обновления', '/setting/update/'), array('Инструменты', '/setting/tool/')));
+$K2->Menu('TAB');
+
 ?>
 <div class="content">
 	<h1>Перечень списков</h1>

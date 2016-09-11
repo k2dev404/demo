@@ -1,6 +1,7 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
-tab(array(array('Настройки', '/setting/'), array('Списки', '/setting/select/'), array('Сайты', '/setting/site/'), array('Обновления', '/setting/update/'), array('Инструменты', '/setting/tool/', 1)));
+$K2->Menu('TAB');
+
 tab_(array(array('Командная PHP-строка', '/setting/tool/', 1), array('Настройки PHP', '/setting/tool/phpinfo/')));
 ?><div class="content">
 	<h1>Командная PHP-строка</h1>

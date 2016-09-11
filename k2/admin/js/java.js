@@ -456,6 +456,8 @@ var tree = {
 }
 
 $(function () {
+	var body = $('body');
+
 	if (typeof(section) != 'undefined') {
 		$('#tree a[section=' + section + ']').parent().addClass('current');
 	}
@@ -579,4 +581,49 @@ $(function () {
 		$('.moreFieldBox').toggle();
 		return false;
 	});
+
+	body.on('click', '.button-list', function(){
+		var p = $(this).parent();
+
+		p.toggleClass('active');
+
+		$(document).mouseup(function (e) {
+			if (p.has(e.target).length === 0){
+				p.removeClass('active');
+			}
+		});
+	});
+
+	body.on('click', '.icon-more', function(){
+		var p = $(this).parent();
+		var pop = $('.action-pop', p);
+
+		pop.removeClass('action-pop-bottom');
+
+		p.toggleClass('icon-more-active');
+
+		if(p.hasClass('icon-more-active')){
+
+
+			if($(document).scrollTop() + $(window).height() < pop.offset().top + pop.outerHeight(true)){
+				pop.addClass('action-pop-bottom');
+			}else{
+
+			}
+
+
+
+
+		}
+
+		$(document).mouseup(function (e) {
+			if (p.has(e.target).length === 0){
+				p.removeClass('icon-more-active');
+			}
+		});
+
+		return false;
+	});
+
+
 });

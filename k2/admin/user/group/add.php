@@ -1,7 +1,8 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('USER', 'GROUP');
-tab(array(array('Пользователи', '/user/'), array('Группы', '/user/group/', 1)));
+$K2->Menu('TAB');
+
 if($_POST){
 	if($nID = $LIB['USER_GROUP']->Add($_POST)){
 		if($_POST['BAPPLY_x']){

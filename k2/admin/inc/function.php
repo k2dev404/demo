@@ -15,14 +15,11 @@ $_CATEGORY = (int)$_REQUEST['category'];
 $_TEMPLATE = $_REQUEST['template'];
 $_SORT = $_REQUEST['sort'];
 $_SECTION_BLOCK = (int)$_REQUEST['section_block'];
-
 $_FIELD = (int)$_REQUEST['field'];
 $_COMPONENT = (int)$_REQUEST['component'];
 $_PATH = $_REQUEST['path'];
 $_COLLECTION = (int)$_REQUEST['collection'];
-
 $_BACK = ($_REQUEST['back'] ? base64_decode($_REQUEST['back']) : '/');
-
 $_PAGE = $_GET['page'] ? ((int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1) : 1;
 
 if (!$USER['PERMISSION']['DEFAULT']['ADMIN']['INDEX']) {

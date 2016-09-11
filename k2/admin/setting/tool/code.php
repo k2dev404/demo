@@ -7,5 +7,6 @@ permissionCheck('DEV');
 error_reporting(E_ALL^E_NOTICE);
 ini_set('display_errors', 1);
 
-eval($_POST['CODE']);
+$sCode = $_POST['CODE'];
+eval($sCode);
 ?>

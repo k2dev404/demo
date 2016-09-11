@@ -1,7 +1,7 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SETTING');
-tab(array(array('Настройки', '/setting/', 1), array('Списки', '/setting/select/'), array('Сайты', '/setting/site/'), array('Обновления', '/setting/update/'), array('Инструменты', '/setting/tool/')));
+$K2->Menu('TAB');
 
 if ($_POST) {
 	foreach ($_POST as $sKey => $sValue) {

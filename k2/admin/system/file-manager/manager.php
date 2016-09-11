@@ -6,7 +6,7 @@ if(!isset($_GET['parent']) && $USER['SETTING']['FM_PARENT'] && $LIB['FILE_DIR']-
 }
 
 if(!$_PARENT){
-	$_PARENT = 1;
+	$_PARENT = 0;
 }
 
 if($_POST){
@@ -50,7 +50,7 @@ INSERT INTO `k2_user_setting` (
 ?><div class="fm">
 	<table class="fm-table">
 		<tr>
-			<td colspan="2" class="fm-nav"><a href="?field=<?=$_REQUEST['field']?>&parent=1">K2</a><?
+			<td colspan="2" class="fm-nav"><a href="?field=<?=$_REQUEST['field']?>&parent=0">K2</a><?
 			$arDir = fileDirListBack($_PARENT);
 			for($i=0, $c=count($arDir); $i<$c; $i++)
 			{

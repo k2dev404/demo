@@ -1,7 +1,8 @@
 <?
 include_once($_SERVER['DOCUMENT_ROOT'].'/k2/admin/header.php');
 permissionCheck('SETTING');
-tab(array(array('Настройки', '/setting/'), array('Списки', '/setting/select/'), array('Сайты', '/setting/site/', 1), array('Обновления', '/setting/update/'), array('Инструменты', '/setting/tool/')));
+$K2->Menu('TAB');
+
 tab_(array(array('Настройки', '/setting/site/edit.php?id='.$_ID, 1), array('Права доступа', '/setting/site/permission.php?id='.$_ID)));
 
 if(!$arSite = $LIB['SITE']->ID($_ID)){

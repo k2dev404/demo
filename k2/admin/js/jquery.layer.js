@@ -3,12 +3,81 @@
 		$('#layer').remove();
 		query = par.query || {};
 		title = par.title || {};
+		iframe = par.iframe || false;
 		w = par.w || 0;
 		h = par.h || 0;
 
 		if (typeof(arguments[1]) != 'undefined') {
 			par.callback = arguments[1];
 		}
+
+		if(iframe){
+			if(!h){
+				h = 300;
+			}
+			html = '<div id="layer">' +
+				'<div class="box">' +
+				'<div class="title">' +
+				'<div class="close"></div>' + title + '</div>' +
+				'<div class="boxInside"><iframe src="' + par.get + '" width="100%" height="100%" frameborder="no"></iframe> </div>' +
+				'</div>' +
+				'</div>';
+
+			$(html).appendTo('body');
+
+			layer = $('#layer');
+
+			if (par.w) {
+				layer.width(par.w);
+			}
+			if (par.h) {
+				layer.height(par.h);
+			}
+
+			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+			var scrolLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+
+			layer.css({
+				'left': Math.ceil(($('body').width() / 2) - (layer.width() / 2) + scrolLeft),
+				'top': Math.ceil(($('body').height() / 2) - (layer.height() / 2) + scrollTop)
+			});
+			layer.show();
+
+			layer.draggable({
+				cursor: 'move',
+				revert: false,
+				addClasses: false,
+				handle: $('#layer .title'),
+				iframeFix: true,
+				scroll: false,
+				containment: 'document'
+			});
+
+			if (par.resize) {
+				if (!par.resizeHeight) {
+					par.resizeHeight = 102;
+				}
+				layer.resizable({
+					minWidth: layer.width(),
+					minHeight: layer.height(),
+					resize: function (event, ui) {
+						$('.boxInside').height($('#layer').height() - par.resizeHeight);
+					}
+				});
+			}
+
+			if (par.callback) {
+				par.callback();
+			}
+			$('.close', layer).click(function () {
+				$('#layer').remove();
+			});
+
+			return;
+		}
+
+
+
 		$.post(par.get, query, function (data) {
 			html = '<div id="layer"><div class="box"><div class="title"><div class="close"></div>' + title + '</div><div class="boxInside">' + data + '</div></div></div>';
 			$(html).appendTo("body");
